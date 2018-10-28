@@ -1,0 +1,4 @@
+{:server-type :peer-server
+ :access-key "admin"
+ :secret "admin"
+ :endpoint "localhost:8998"}
