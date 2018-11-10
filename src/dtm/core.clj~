@@ -1,9 +1,0 @@
-(ns dtm.core
-  (:require [datomic.client.api :as d])
-  (:gen-class))
-
-(def schema-def (read-string (slurp "src/dtm/hhs-schema.edn")))
-(def config (read-string (slurp "resources/config.edn") ))
-
-
-(def client (d/client config))

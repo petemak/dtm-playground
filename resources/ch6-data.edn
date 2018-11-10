@@ -3,40 +3,89 @@
   :user/login "buggy"
   :user/first-name "Bugs"
   :user/last-name "Bunny"
-  :user/email "bugbun@gmail.com"}
- {:db/id #db/id[:db.part/db 101]
+  :user/email "bugbun@gmail.com"
+  :user/friend [101  102  103  105]}
+ {:db/id #db/id [:db.part/db 101]
+  :user/login "loly"
+  :user/first-name "lola"
+  :user/last-name "Bunny"
+  :user/email "lobu@gmail.com"
+  :user/friend [100 102]}
+ {:db/id #db/id [:db.part/db 102]
   :user/login "duffy"
   :user/first-name "Daffy"
   :user/last-name "Duck"
-  :user/email "dadu@gmail.com"}
- {:db/id #db/id[:db.part/db 102]
+  :user/email "dadu@gmail.com"
+  :user/friend [100]}
+ {:db/id #db/id [:db.part/db 103]
   :user/login "porky"
   :user/first-name "Porky"
   :user/last-name "Pig"
-  :user/email "popi@gmail.com"}
- {:db/id #db/id[:db.part/db 103]
+  :user/email "popi@gmail.com"
+  :user/friend [100]}
+ {:db/id #db/id [:db.part/db 104]
   :user/login "betty"
   :user/first-name "Betty"
   :user/last-name "Boop"
   :user/email "bebo@gmail.com"}
- {:db/id #db/id[:db.part/db 104]
+ {:db/id #db/id [:db.part/db 105]
   :user/login "yosey"
   :user/first-name "Yosemite"
   :user/last-name "Sam"
   :user/email "yosa@gmail.com"}
- {:db/id #db/id[:db.part/db 105]
+ {:db/id #db/id [:db.part/db 106]
   :user/login "elfu"
   :user/first-name "Elmer"
   :user/last-name "Fudd"
   :user/email "elfu@gmail.com"}
- {:db/id #db/id[:db.part/db 106]
+ {:db/id #db/id [:db.part/db 107]
   :user/login "jerry"
   :user/first-name "Jerry"
   :user/last-name "Mouse"
-  :user/email "jemo@gmail.com"}
- {:db/id #db/id[:db.part/db 107]
+  :user/email "jemo@gmail.com"
+  :user/friend [111]}
+ {:db/id #db/id [:db.part/db 108]
+  :user/login "fred"
+  :user/first-name "Fred"
+  :user/last-name "Flintstone"
+  :user/email "fefl@gmail.com"
+  :user/friend [113]}
+ {:db/id #db/id [:db.part/db 109]
   :user/login "wilma"
   :user/first-name "Wilma"
   :user/last-name "Flintstone"
-  :user/email "wifl@gmail.com"} ]
-
+  :user/email "wifl@gmail.com"
+  :user/friend [114]}
+ {:db/id #db/id [:db.part/db 110]
+  :user/login "marvy"
+  :user/first-name "Marvin"
+  :user/last-name "The Martian"
+  :user/email "mama@gmail.com"} 
+ {:db/id #db/id [:db.part/db 111]
+  :user/login "taz"
+  :user/first-name "Tasmanian"
+  :user/last-name "Devil"
+  :user/email "tade@gmail.com"} 
+ {:db/id #db/id [:db.part/db 112]
+  :user/login "speedy"
+  :user/first-name "Speedy"
+  :user/last-name "Gonzales"
+  :user/email "spego@gmail.com"
+  :user/friend [107]}
+ {:db/id #db/id [:db.part/db 113]
+  :user/login "bernie"
+  :user/first-name "Barney"
+  :user/last-name "Rubble"
+  :user/email "baru@gmail.com"
+  :user/friend [108]}
+ {:db/id #db/id [:db.part/db 114]
+  :user/login "bettyr"
+  :user/first-name "Betty"
+  :user/last-name "Rubble"
+  :user/email "beru@gmail.com"
+  :user/friend [109]}
+ {:db/id #db/id [:db.part/db 115]
+  :user/login "bamm-bamm"
+  :user/first-name "Bamm-Bamm"
+  :user/last-name "Rubble"
+  :user/email "bambam@gmail.com"}]
