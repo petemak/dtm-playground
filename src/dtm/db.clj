@@ -42,7 +42,7 @@
 ;; just like any other data you put into the database.
 ;; To add new schema, you issue a transaction that carries the
 ;; new schema definition.
-(defn transact-test-schema
+(defn transact-user-schema
   "Save schema that defines attributes that can
    can be associate with and entity"
   []
@@ -55,53 +55,84 @@
   (d/transact conn ch6-data))
 
 
+;;------------------------------------------------
 ;;
 ;; Query all users
-(def all-users '[:find ?f ?l
-                 :where
-                 [?e :user/first-name ?f]
-                 [?e :user/last-name ?l]])
+(def all-users-query
+  '[:find ?f ?l
+    :where
+    [?e :user/first-name ?f]
+    [?e :user/last-name ?l]])
 
 
-(defn find-users
-  "Return firs and last name of all users"
+(defn all-users
+  "Return first and last name of all users"
   []
-  (d/q all-users (d/db conn)))
+  (d/q all-users-query
+       (d/db conn)))
 
+
+;;------------------------------------------------
 ;; Query retunrs all users who have a friend
 ;; with a given name.
-(def users-friend
-  '[:find ?e ?first-name ?last-name
-    :in $ ?friend-name
+(def users-by-friend-query
+  '[:find ?e ?f ?l ?m
+    :in $ ?name
     :where
-    [?e :user/first-name ?first-name]
-    [?e :user/last-name ?last-name]
-    [?e :user/friend ?f]
-    [?f :user/first-name ?friend-name]])
+    [?e :user/first-name ?f]
+    [?e :user/last-name ?l]
+    [?e :user/friend ?d]
+    [?d :user/first-name ?name]
+    [?e :user/email ?m]])
 
-(defn friend-of
+(defn users-by-friend
   "Returns all users who are freinds with a 
   a user with the given first name"
   [friend-name]
-  (d/q users-friend
+  (d/q users-by-friend-query
        (d/db conn)
        friend-name))
 
 
-
+;;------------------------------------------------
 ;; Query returns all data of a user
-;; who has the goven name
-(def name-query '[:find ?e ?f ?l ?m
-                  :in $ ?f
-                  :where
-                  [?e :user/first-name ?f]
-                  [?e :user/last-name ?l]
-                  [?e :user/email ?m]])
+;; who has the given name
+(def users-by-name-query
+  '[:find ?e ?f ?l ?m
+    :in $ ?f
+    :where
+    [?e :user/first-name ?f]
+    [?e :user/last-name ?l]
+    [?e :user/email ?m]])
 
 
-(defn find-by-name
+(defn users-by-name
   "Find a user by the given name. Can be first or last name"
   [name]
-  (d/q name-query
+  (d/q users-by-name-query
        (d/db conn)
        name))
+
+
+;;------------------------------------------------
+;; Find a user bywith the given email
+;; 
+(def user-by-mail-query
+  '[:find ?e ?f ?l ?mail
+    :in $ ?mail
+    :where
+    [?e :user/email ?mail]
+    [?e :user/first-name ?f]
+    [?e :user/last-name ?l]])
+
+
+(defn user-by-mail
+  "Find a user with the specified email"
+  [email]
+  (d/q user-by-mail-query
+       (d/db conn)
+       email))
+
+;;------------------------------------------------
+;; add a new user
+;; 
