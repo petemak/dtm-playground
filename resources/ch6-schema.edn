@@ -107,7 +107,7 @@
  {:db/ident :user/friend
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many
-  :db/doc "Friend refrence"}
+  :db/doc "Friend reference"}
 
  {:db/ident :user/account
   :db/valueType :db.type/ref

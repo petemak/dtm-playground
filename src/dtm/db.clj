@@ -4,7 +4,6 @@
 
 
 (def hhs-schema (read-string (slurp "src/dtm/hhs-schema.edn")))
-(def ch6-parts  (read-string (slurp "resources/ch6-partitions.edn")))
 (def ch6-schema (read-string (slurp "resources/ch6-schema.edn")))
 (def ch6-data   (read-string (slurp "resources/ch6-data.edn")))
 (def config     (read-string (slurp "resources/config.edn") ))
@@ -72,26 +71,27 @@
        (d/db conn)))
 
 
-;;------------------------------------------------
-;; Query retunrs all users who have a friend
-;; with a given name.
-(def users-by-friend-query
-  '[:find ?e ?f ?l ?m
-    :in $ ?name
-    :where
-    [?e :user/first-name ?f]
-    [?e :user/last-name ?l]
-    [?e :user/friend ?d]
-    [?d :user/first-name ?name]
-    [?e :user/email ?m]])
 
-(defn users-by-friend
-  "Returns all users who are freinds with a 
-  a user with the given first name"
-  [friend-name]
-  (d/q users-by-friend-query
-       (d/db conn)
-       friend-name))
+;;------------------------------------------------
+;; Find a user based on login id
+;;
+(def user-by-lgn-query
+  '[:find ?e ?lgn ?f ?l ?m
+    :in $ ?lgn
+    :where [?e :user/login ?lgn]
+           [?e :user/first-name ?f]
+           [?e :user/last-name ?l]
+           [?e :user/email ?m]])
+
+(defn user-by-lgn
+  "Find the user with the specified log-in ID.
+  - lgn: the id of the user to find"
+  [lgn]
+  (-> (d/q user-by-lgn-query
+           (d/db conn)
+           lgn)
+      first))
+
 
 
 ;;------------------------------------------------
@@ -118,10 +118,11 @@
 ;; Find a user bywith the given email
 ;; 
 (def user-by-mail-query
-  '[:find ?e ?f ?l ?mail
-    :in $ ?mail
+  '[:find ?e ?d ?f ?l ?m
+    :in $ ?m
     :where
-    [?e :user/email ?mail]
+    [?e :user/email ?m]
+    [?e :user/login ?d]
     [?e :user/first-name ?f]
     [?e :user/last-name ?l]])
 
@@ -129,10 +130,111 @@
 (defn user-by-mail
   "Find a user with the specified email"
   [email]
-  (d/q user-by-mail-query
-       (d/db conn)
-       email))
+  (-> (d/q user-by-mail-query
+           (d/db conn)
+           email)
+      first))
+
+
 
 ;;------------------------------------------------
-;; add a new user
+;; Return friends of a specific user
 ;; 
+(def friends-query
+  '[:find ?fs
+    :in $ ?lgn
+    :where
+    [?e :user/login ?lgn]
+    [?e :user/friend ?fs]])
+
+
+
+(defn friends
+  "Find the entity ids friends of the person specified
+   by the given login"
+  [lgn]
+  (let [fs (d/q friends-query
+                (d/db conn)
+                lgn)]
+    (->> fs
+         (map first)
+         vec)))
+
+;;------------------------------------------------
+;; Query retunrs all users who have a friend
+;; with a given name.
+(def users-by-friend-query
+  '[:find ?e ?f ?l ?m
+    :in $ ?name
+    :where
+    [?e :user/first-name ?f]
+    [?e :user/last-name ?l]
+    [?e :user/friend ?d]
+    [?d :user/first-name ?name]
+    [?e :user/email ?m]])
+
+(defn users-by-friend
+  "Returns all users who are freinds with a 
+   a user with the given first name"
+  [friend-name]
+  (d/q users-by-friend-query
+       (d/db conn)
+       friend-name))
+
+
+;;------------------------------------------------
+;; Add a new user
+;; 
+(defn add-user
+  "Transacts a new user to the data storage
+   lgn - user login
+   f - first name
+   l - last name
+   e - email
+   Example: (db/add-user \"roru\" \"Road\" \"Runner\" \"roru@gmail.com\")"
+  [lgn f l e]
+  (let [tx-data [{:user/login lgn
+                  :user/first-name f
+                  :user/last-name l
+                  :user/email e}] ]
+    (d/transact conn  tx-data)))
+
+
+
+;;------------------------------------------------
+;; Make 2 people friends of each orther
+;; transact a datom [e a v]
+;; [e-id1 :user/friend [102 103 108]
+(defn make-friends
+  "Given 2 user ids, make them friends"
+  [lgn1 lgn2]
+  (let [friends1 (friends lgn1)
+        friends2 (friends lgn2)
+        e-id1 (first (user-by-lgn lgn1))
+        e-id2 (first (user-by-lgn lgn2))]
+    (do
+      (let [friends1 (if (nil? friends1) [] friends1)
+            friends2 (if (nil? friends2) [] friends2)            
+            friends1 (conj friends1 e-id2)
+            friends2 (conj friends2 e-id1)]
+
+        (d/transact conn [{:db/id [:user/login lgn1]
+                           :user/friend friends1}
+                          {:db/id [:user/login lgn2]
+                           :user/friend friends2}])))))
+
+
+
+(defn results-make-freinds
+  "Do :db-after to check results of make-friends transaction
+   1) dereffered transaction results containing :db-before, :db-after, 
+      and :tx-results
+   2) eid - entity identifie e.g. [:user/login \"fred\"]
+    "
+  [tx-res eid]
+  (-> (d/pull (:db-after tx-res) '[:user/friend] eid)
+      :user/friend))
+
+
+
+

@@ -1,7 +1,0 @@
-[{:db/id "accounts"
-  :db/ident :accounts}
- [:db/add :db.part/db :db.install/partition "accounts"]
-
- {:db/id "task"
-  :db/ident :task}
- [:db/add :db.part/db :db.install/partition "task"]]
